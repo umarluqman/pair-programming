@@ -1,60 +1,94 @@
-import { alertOptions } from "@/constants";
 import { IFormValues } from "@/pages";
 import { PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import clsx from "clsx";
+import { useKeyRef } from "rooks";
 
 import {
   Control,
   Controller,
   useFieldArray,
-  UseFormRegister,
+  UseFormGetValues,
+  UseFormSetValue,
 } from "react-hook-form";
 
 interface StepThreeProps {
   control: Control<IFormValues>;
-  register: UseFormRegister<IFormValues>;
+  getValues: UseFormGetValues<IFormValues>;
+  setValue: UseFormSetValue<IFormValues>;
 }
 
-export const StepThree = ({ control, register }: StepThreeProps) => {
+export const StepThree = ({ control, setValue, getValues }: StepThreeProps) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "channel",
   });
 
+  const handleAdd = () => {
+    const { channelEntry } = getValues();
+    if (!channelEntry) return;
+
+    // Email validation
+    if (/(.+)@(.+){2,}\.(.+){2,}/.test(channelEntry)) {
+      append({
+        type: "email",
+        value: channelEntry,
+      });
+      setValue("channelEntry", "");
+    }
+  };
+
+  const inputRef = useKeyRef(["Enter"], handleAdd);
   return (
     <>
       <div>Channels</div>
-      <div className="p-4 bg-slate-100 rounded-lg mt-4 border border-slate-400 border-solid">
-        <div className="mb-4 flex justify-between w-full items-center">
-          <label className="text-sm text-slate-600">Email</label>
-          <button
-            type="button"
-            onClick={() => append({ type: "email", value: "" })}
-            className="flex rounded-lg p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-800"
-          >
-            <PlusIcon className="w-6 h-6" />
-          </button>
-        </div>
-
-        <ul className="flex flex-col gap-5">
-          {fields.map((item, index) => (
-            <li key={item.id} className="flex items-center gap-2">
-              <input
-                {...register(`channel.${index}.value`)}
-                type={item.type}
-                className="flex h-10 w-full rounded-md border border-slate-300 bg-white py-2 px-3 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:text-slate-50 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900"
-              />
-              {index !== 0 && (
+      <div className="p-4 bg-slate-50 rounded-lg mt-4 border border-slate-300 border-solid">
+        <label className="text-sm text-slate-600">Email</label>
+        <ul className="mt-1 flex flex-col gap-5">
+          <li className="flex items-center gap-1 sm:text-sm">
+            <Controller
+              control={control}
+              name={`channelEntry`}
+              render={({ field }) => (
+                <>
+                  <input
+                    {...field}
+                    type={"email"}
+                    className="flex w-full max-w-xs rounded-md border border-slate-300 bg-white py-2 px-3 text-sm placeholder:text-slate-400"
+                    ref={(e) => {
+                      field.ref(e); // for react-hook-form
+                      inputRef(e); // for listening to key events
+                    }}
+                    placeholder="Enter email(s)"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAdd}
+                    className="transition-colors flex rounded-lg p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                  >
+                    <PlusIcon className="w-6 h-6" />
+                  </button>
+                </>
+              )}
+            />
+          </li>
+          <div className="flex flex-wrap gap-1">
+            {fields.map((item, index) => (
+              <li
+                key={item.id}
+                className="text-sm flex items-center gap-0 justify-start w-fit"
+              >
+                <div className="rounded-l-md py-1 bg-indigo-100 text-indigo-700 flex pl-2 pr-1 ">
+                  {item.value}
+                </div>
                 <button
                   type="button"
                   onClick={() => remove(index)}
-                  className="flex rounded-lg p-2 text-slate-500 hover:bg-red-100 hover:text-red-800"
+                  className="bg-indigo-100 py-1 text-indigo-700 transition-colors flex rounded-r-md p-[2px] hover:bg-red-100 hover:text-red-800"
                 >
-                  <XMarkIcon className="w-6 h-6" />
+                  <XMarkIcon className="w-5 h-5" />
                 </button>
-              )}
-            </li>
-          ))}
+              </li>
+            ))}
+          </div>
         </ul>
       </div>
 

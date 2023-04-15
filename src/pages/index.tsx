@@ -1,15 +1,14 @@
 import { AlertDialog } from "@/components/AlertDialog";
 // import { ResizablePanel } from "@/components/ResizablePanel";
 import type { IValidatorOption } from "@/components/Select";
+import { Step } from "@/components/Step";
 import { StepOne } from "@/components/StepOne";
-import { StepThree } from "@/components/StepThreeNew";
+import { StepThree } from "@/components/StepThree";
 import { StepTwo } from "@/components/StepTwo";
-import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
 let loggedIn = true;
-let duration = 0.5;
 
 export interface IFormValues {
   validator: IValidatorOption | null;
@@ -34,11 +33,10 @@ export default function Page() {
   };
   console.log({ step });
 
-  const { register, handleSubmit, control, setValue, getValues } =
-    useForm<IFormValues>({
-      values: initialValues,
-      mode: "all",
-    });
+  const { handleSubmit, control, setValue, getValues } = useForm<IFormValues>({
+    values: initialValues,
+    mode: "all",
+  });
 
   const alert = useWatch({
     control,
@@ -88,7 +86,6 @@ export default function Page() {
         return (
           <StepThree
             getValues={getValues}
-            register={register}
             control={control}
             setValue={setValue}
           />
@@ -152,74 +149,5 @@ export default function Page() {
       </div>
       {/* </ResizablePanel> */}
     </div>
-  );
-}
-
-interface StepProps {
-  step: number;
-  currentStep: number;
-}
-
-function Step({ step, currentStep }: StepProps) {
-  let status =
-    currentStep === step
-      ? "active"
-      : currentStep < step
-      ? "inactive"
-      : "complete";
-
-  return (
-    <motion.div
-      animate={{
-        backgroundColor: status === "complete" ? "rgb(59 130 246)" : "#FFF",
-      }}
-      className={`${
-        status === "active"
-          ? "border-blue-500 bg-white text-blue-500"
-          : status === "complete"
-          ? "border-blue-500 bg-blue-500"
-          : "border-slate-200 bg-white text-slate-400"
-      } flex h-10 w-10 items-center justify-center rounded-full border-2 font-semibold`}
-    >
-      <div className="flex items-center justify-center">
-        {status === "complete" ? (
-          <CheckIcon status={status} className="h-6 w-6 text-white" />
-        ) : (
-          <span>{step}</span>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-function CheckIcon({
-  className,
-  status,
-}: {
-  className?: string;
-  status: string;
-}) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={3}
-    >
-      <motion.path
-        initial={{ pathLength: 0 }}
-        animate={{ pathLength: status === "complete" ? 1 : 0 }}
-        transition={{
-          delay: 0.2,
-          type: "tween",
-          ease: "easeOut",
-          duration: 0.3,
-        }}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
   );
 }
