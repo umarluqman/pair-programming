@@ -7,8 +7,7 @@ import { StepThree } from "@/components/StepThree";
 import { StepTwo } from "@/components/StepTwo";
 import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-
-let loggedIn = true;
+let loggedIn = false;
 
 export interface IFormValues {
   validator: IValidatorOption | null;
@@ -31,7 +30,7 @@ export default function Page() {
     channel: [],
     channelEntry: "",
   };
-  console.log({ step });
+  console.log({ step, open });
 
   const { handleSubmit, control, setValue, getValues } = useForm<IFormValues>({
     values: initialValues,
@@ -60,21 +59,12 @@ export default function Page() {
       data.channel.length >= 1 &&
       data.alert.length >= 1
     ) {
-      if (loggedIn) {
-        setStep(step > 3 ? step : step + 1);
-      } else {
+      if (!loggedIn) {
         setOpen(true);
       }
       console.log("onSubmit", { data });
     }
   };
-
-  useEffect(() => {
-    // reset state after dialog is opened
-    if (open) {
-      setOpen(false);
-    }
-  }, [open]);
 
   const renderStep = useMemo(() => {
     switch (step) {
@@ -105,7 +95,11 @@ export default function Page() {
   }, [step, validator, alert.length, channel.length]);
 
   return (
-    <div className="flex min-h-screen items-start bg-gradient-to-br from-slate-700 to-slate-900 pt-40">
+    <div
+      //   className="flex min-h-screen items-start
+      // bg-gradient-to-br from-slate-700 to-slate-900 pt-40"
+      className="flex min-h-screen items-start pt-40"
+    >
       <AlertDialog isOpen={open} setOpen={setOpen} />
       {/* <ResizablePanel id={`${step}`}> */}
       <div className="mx-auto w-full max-w-xl rounded-2xl bg-white">
@@ -114,7 +108,7 @@ export default function Page() {
           <Step step={2} currentStep={step} />
           <Step step={3} currentStep={step} />
         </div>
-        <form className="px-8 pb-8" onSubmit={handleSubmit(onSubmit)}>
+        <form className="px-8 pb-8" onSubmit={handleSubmit(onSubmit)} id="form">
           <div className="">{renderStep}</div>
           <div className="mt-10 flex justify-between">
             <button
@@ -127,6 +121,7 @@ export default function Page() {
             {step === 3 ? (
               <button
                 type="submit"
+                form="form"
                 className={`${
                   isDisabled ? "pointer-events-none opacity-50" : ""
                 } bg flex items-center justify-center rounded-full bg-blue-500 py-1.5 px-3.5 font-medium tracking-tight text-white hover:bg-blue-600 active:bg-blue-700`}
