@@ -3,23 +3,36 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5214",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.13",
+    "@heroicons/react": "^2.0.17",
+    "@radix-ui/react-accordion": "^1.1.1",
+    "@radix-ui/react-alert-dialog": "^1.0.3",
+    "@radix-ui/react-dialog": "^1.0.3",
+    "@radix-ui/react-dropdown-menu": "^2.0.4",
+    "@radix-ui/react-select": "^1.2.1",
     "@types/node": "18.15.11",
     "@types/react": "18.0.34",
     "@types/react-dom": "18.0.11",
     "autoprefixer": "10.4.14",
+    "clsx": "^1.2.1",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
+    "framer-motion": "^10.11.6",
     "next": "13.3.0",
     "postcss": "8.4.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.43.9",
+    "react-use-measure": "^2.1.1",
+    "rooks": "^7.11.1",
     "tailwindcss": "3.3.1",
+    "truncate-eth-address": "^1.0.2",
     "typescript": "5.0.4"
   }
 }
