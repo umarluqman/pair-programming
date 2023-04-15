@@ -9,6 +9,7 @@ import {
   UseFormGetValues,
   UseFormSetValue,
 } from "react-hook-form";
+import { MouseEvent } from "react";
 
 interface StepThreeProps {
   control: Control<IFormValues>;
@@ -22,7 +23,7 @@ export const StepThree = ({ control, setValue, getValues }: StepThreeProps) => {
     name: "channel",
   });
 
-  const handleAdd = () => {
+  const handleAdd = (e: MouseEvent) => {
     const { channelEntry } = getValues();
     if (!channelEntry) return;
 
@@ -36,7 +37,22 @@ export const StepThree = ({ control, setValue, getValues }: StepThreeProps) => {
     }
   };
 
-  const inputRef = useKeyRef(["Enter"], handleAdd);
+  const handleOnEnter = (e: KeyboardEvent) => {
+    e.preventDefault();
+    const { channelEntry } = getValues();
+    if (!channelEntry) return;
+
+    // Email validation
+    if (/(.+)@(.+){2,}\.(.+){2,}/.test(channelEntry)) {
+      append({
+        type: "email",
+        value: channelEntry,
+      });
+      setValue("channelEntry", "");
+    }
+  };
+
+  const inputRef = useKeyRef(["Enter"], handleOnEnter);
   return (
     <>
       <div>Channels</div>

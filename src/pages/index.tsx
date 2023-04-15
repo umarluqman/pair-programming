@@ -5,8 +5,9 @@ import { Step } from "@/components/Step";
 import { StepOne } from "@/components/StepOne";
 import { StepThree } from "@/components/StepThree";
 import { StepTwo } from "@/components/StepTwo";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+
 let loggedIn = false;
 
 export interface IFormValues {
@@ -30,7 +31,6 @@ export default function Page() {
     channel: [],
     channelEntry: "",
   };
-  console.log({ step, open });
 
   const { handleSubmit, control, setValue, getValues } = useForm<IFormValues>({
     values: initialValues,
@@ -61,6 +61,8 @@ export default function Page() {
     ) {
       if (!loggedIn) {
         setOpen(true);
+      } else {
+        setStep(step > 3 ? step : step + 1);
       }
       console.log("onSubmit", { data });
     }
@@ -96,9 +98,8 @@ export default function Page() {
 
   return (
     <div
-      //   className="flex min-h-screen items-start
-      // bg-gradient-to-br from-slate-700 to-slate-900 pt-40"
-      className="flex min-h-screen items-start pt-40"
+      className="flex min-h-screen items-start
+      bg-gradient-to-br from-slate-700 to-slate-900 pt-40"
     >
       <AlertDialog isOpen={open} setOpen={setOpen} />
       {/* <ResizablePanel id={`${step}`}> */}
@@ -108,12 +109,12 @@ export default function Page() {
           <Step step={2} currentStep={step} />
           <Step step={3} currentStep={step} />
         </div>
-        <form className="px-8 pb-8" onSubmit={handleSubmit(onSubmit)} id="form">
+        <form className="px-8 pb-8" onSubmit={handleSubmit(onSubmit)}>
           <div className="">{renderStep}</div>
           <div className="mt-10 flex justify-between">
             <button
               type="button"
-              onClick={() => setStep(step < 2 ? step : step - 1)}
+              onClick={() => setStep(step === 1 ? step : step - 1)}
               className="rounded px-2 py-1 text-slate-400 hover:text-slate-700"
             >
               Back
@@ -121,17 +122,19 @@ export default function Page() {
             {step === 3 ? (
               <button
                 type="submit"
-                form="form"
                 className={`${
                   isDisabled ? "pointer-events-none opacity-50" : ""
-                } bg flex items-center justify-center rounded-full bg-blue-500 py-1.5 px-3.5 font-medium tracking-tight text-white hover:bg-blue-600 active:bg-blue-700`}
+                } bg flex items-center justify-center rounded-full bg-blue-500 py-1.5 px-5 font-medium tracking-tight text-white hover:bg-blue-600 active:bg-blue-700`}
               >
                 Save
               </button>
             ) : (
               <button
                 type="button"
-                onClick={() => setStep(step > 3 ? step : step + 1)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setStep(step > 3 ? step : step + 1);
+                }}
                 className={`${
                   isDisabled ? "pointer-events-none opacity-50" : ""
                 } bg flex items-center justify-center rounded-full bg-blue-500 py-1.5 px-3.5 font-medium tracking-tight text-white hover:bg-blue-600 active:bg-blue-700`}
